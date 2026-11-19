@@ -5,7 +5,7 @@ from fastapi.responses import StreamingResponse
 from pathlib import Path
 from PIL import Image, UnidentifiedImageError
 import io, json, time, uuid, sqlite3, csv, os
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Optional
 
 from ultralytics import YOLO
@@ -187,6 +187,42 @@ def init_live_tables():
             id TEXT PRIMARY KEY, started_at TEXT NOT NULL, ended_at TEXT,
             source TEXT NOT NULL, frames INTEGER DEFAULT 0, detections INTEGER DEFAULT 0,
             status TEXT NOT NULL DEFAULT 'active')""")
+        # Datos iniciales DEMO: completar hasta 10 registros por vista, una sola vez.
+        # Están etiquetados explícitamente como DEMO y NO son detecciones reales.
+        now = datetime.now(timezone.utc)
+        labels = ["persona", "pallet", "carretilla", "caja", "casco", "persona", "vehículo", "pieza", "pallet", "persona"]
+        demo_sources = ["Cámara almacén · DEMO", "Video planta · DEMO", "Escenario calidad · DEMO"]
+        demo_sessions = []
+        for i in range(10):
+            sid = f"demo-session-{i+1:02d}"
+            started = (now - timedelta(hours=i+1)).isoformat()
+            ended = (now - timedelta(hours=i+1) + timedelta(minutes=8+i)).isoformat()
+            source = demo_sources[i % len(demo_sources)]
+            con.execute("INSERT OR IGNORE INTO live_sessions(id,started_at,ended_at,source,frames,detections,status) VALUES(?,?,?,?,?,?,?)",
+                (sid, started, ended, source, 420 + i*37, 12 + i*3, "completed"))
+            demo_sessions.append((sid, started, source))
+
+        alert_count = con.execute("SELECT COUNT(*) FROM live_alerts").fetchone()[0]
+        for i in range(max(0, 10-alert_count)):
+            sid, started, source = demo_sessions[i]
+            created = (now - timedelta(minutes=10*i+2)).isoformat()
+            label = labels[i]
+            track = 100 + i
+            status = ["pending", "in_review", "resolved", "dismissed", "resolved"][i % 5]
+            severity = "critical" if label == "persona" else ("warning" if label in ("pallet", "casco") else "info")
+            title = ["Persona detectada en zona operativa", "Objeto en ruta de circulación", "Verificación de equipo móvil", "Elemento en área de inspección", "Revisión preventiva de seguridad"][i % 5]
+            description = f"DEMO: registro inicial de ejemplo para probar el historial. Entidad: {label}; escenario: {source}. No corresponde a una detección real."
+            con.execute("INSERT INTO live_alerts(created_at,updated_at,title,description,severity,status,source,session_id,track_id,label,confidence) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+                (created, created, title, description, severity, status, source, sid, track, label, round(.78 + (i%4)*.04, 2)))
+
+        event_count = con.execute("SELECT COUNT(*) FROM live_events").fetchone()[0]
+        for i in range(max(0, 10-event_count)):
+            sid, started, source = demo_sessions[i]
+            created = (now - timedelta(minutes=10*i+2)).isoformat()
+            label = labels[i]
+            box = {"x": 80+i*12, "y": 60+i*7, "width": 110, "height": 180}
+            con.execute("INSERT INTO live_events(session_id,created_at,source,track_id,label,confidence,box_json,snapshot_path) VALUES(?,?,?,?,?,?,?,?)",
+                (sid, created, source, 100+i, label, round(.78 + (i%4)*.04, 2), json.dumps(box), None))
 
 @app.post('/api/live/sessions')
 def create_live_session(payload: dict):
