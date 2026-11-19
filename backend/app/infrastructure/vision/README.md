@@ -1,1 +1,0 @@
-Adaptador real local basado en Ultralytics YOLO. Los pesos se descargan la primera vez que se ejecuta cada modo.
