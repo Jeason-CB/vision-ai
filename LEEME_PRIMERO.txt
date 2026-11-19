@@ -1,0 +1,14 @@
+VISION AI - VERSION CORREGIDA
+
+1) NO BORRES el repositorio de GitHub ni los proyectos de Vercel/Render.
+2) Haz una copia de seguridad del repositorio actual antes de reemplazar archivos.
+3) Sube el CONTENIDO de esta carpeta al mismo repositorio GitHub, conservando la estructura frontend/ y backend/.
+4) Render debe usar rootDir=backend y Vercel root directory=frontend.
+5) En Vercel configura VITE_API_URL con la URL pública de Render (sin /api) y vuelve a desplegar.
+6) En Render configura CORS_ORIGINS con el dominio Vercel exacto y vuelve a desplegar.
+7) render.yaml usa un disco persistente en /var/data (plan compatible con discos persistentes). Si tu servicio actual ya tiene un disco, NO lo elimines ni cambies su mount path sin revisar antes la configuración.
+8) La cámara necesita HTTPS y permiso del navegador. Para archivos de video se recomienda MP4 H.264 o WEBM compatible con Chrome/Edge.
+9) La galería 2D es simulación DEMO. El análisis de cámara/video usa YOLO + ByteTrack en backend.
+10) No se pudo ejecutar npm build en este entorno porque npm install agotó el tiempo disponible; el backend sí pasó compilación sintáctica de Python. Antes de producción ejecuta npm install y npm run build.
+
+Lee README.md para los pasos completos.

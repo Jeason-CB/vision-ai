@@ -1,0 +1,1 @@
+Exportaciones: el endpoint /api/export.csv genera el registro cronológico de análisis.
