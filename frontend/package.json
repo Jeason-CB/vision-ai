@@ -17,9 +17,9 @@
     "lucide-react": "0.468.0"
   },
   "devDependencies": {
-  "@types/react": "^19.1.0",
-  "@types/react-dom": "^19.1.0"
-},
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4"
+  },
   "engines": {
     "node": ">=20"
   }
