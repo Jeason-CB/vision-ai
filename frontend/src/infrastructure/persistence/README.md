@@ -1,1 +1,0 @@
-Persistencia local: SQLite en backend/vision_ai.db. El backend es responsable de crear y consultar Analysis y Detection.
