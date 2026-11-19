@@ -5,11 +5,15 @@ services:
     rootDir: backend
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
-    plan: free
+    plan: starter
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
       - key: VISION_DB_PATH
-        value: /tmp/vision_ai.db
+        value: /var/data/vision_ai.db
       - key: CORS_ORIGINS
         sync: false
+    disk:
+      name: vision-ai-data
+      mountPath: /var/data
+      sizeGB: 1
