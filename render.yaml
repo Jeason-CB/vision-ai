@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: vision-ai-api
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    plan: starter
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: VISION_DB_PATH
+        value: /var/data/vision_ai.db
+      - key: CORS_ORIGINS
+        sync: false
+    disk:
+      name: vision-ai-data
+      mountPath: /var/data
+      sizeGB: 1

@@ -1,0 +1,1 @@
+Casos de uso: validar imagen, preprocesar, ejecutar inferencia, postprocesar detecciones/máscaras, evaluar reglas y persistir resultados.

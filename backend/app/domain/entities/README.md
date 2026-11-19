@@ -1,0 +1,1 @@
+Entidades previstas por el dominio: Analysis, Detection, Segmentation, Pattern, Alert, Class, Rule y Scenario.
